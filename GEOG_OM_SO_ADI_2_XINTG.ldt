@@ -1,0 +1,3374 @@
+# $Header$
+
+# dbdrv: exec fnd bin FNDLOAD bin &phase=dat+52 checkfile:~PROD:~PATH:~FILE &ui_apps 0 Y UPLOAD @BNE:patch/115/import/bneintegrator.lct @~PROD:~PATH/~FILE
+LANGUAGE = "US"
+LDRCONFIG = "bneintegrator.lct 120.9.12010000.2"
+
+#Source Database EBSPDEV
+
+#RELEASE_NAME 12.1.3
+
+# -- Begin Entity Definitions -- 
+
+DEFINE BNE_INTEGRATORS
+  KEY   INTEGRATOR_ASN                  VARCHAR2(120)
+  KEY   INTEGRATOR_CODE                 VARCHAR2(30)
+  CTX   OWNER                           VARCHAR2(120)
+  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+  BASE  ENABLED_FLAG                    VARCHAR2(1)
+  BASE  UPL                             REFERENCES BNE_PARAM_LISTS
+  BASE  UPL_SERV                        REFERENCES BNE_PARAM_LISTS
+  BASE  IMPORT                          REFERENCES BNE_PARAM_LISTS
+  BASE  DATE_FORMAT                     VARCHAR2(100)
+  BASE  IMPORT_TYPE                     VARCHAR2(50)
+  BASE  UPLOADER_CLASS                  VARCHAR2(240)
+  TRANS USER_NAME                       VARCHAR2(240)
+  TRANS UPLOAD_HEADER                   VARCHAR2(240)
+  TRANS UPLOAD_TITLE_BAR                VARCHAR2(240)
+  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+  BASE  CREATE_DOC                      REFERENCES BNE_PARAM_LISTS
+  BASE  NEW_SESSION_FLAG                VARCHAR2(1)
+  BASE  LAYOUT_RESOLVER_CLASS           VARCHAR2(240)
+  BASE  LAYOUT_VERIFIER_CLASS           VARCHAR2(240)
+  BASE  SESSION_CONFIG_CLASS            VARCHAR2(240)
+  BASE  SESSION                         REFERENCES BNE_PARAM_LISTS
+  BASE  SECURITY                        REFERENCES BNE_SECURED_OBJECTS
+  BASE  DISPLAY_FLAG                    VARCHAR2(1)
+  BASE  SOURCE                          VARCHAR2(1)
+
+  DEFINE BNE_MENUS
+    KEY   MENU_ASN                        VARCHAR2(120)
+    KEY   MENU_CODE                       VARCHAR2(30)
+    CTX   OWNER                           VARCHAR2(120)
+    BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+    BASE  PARENT_MENU_ASN                 VARCHAR2(120)
+    BASE  PARENT_MENU_CODE                VARCHAR2(30)
+    BASE  SEQUENCE_NUM                    VARCHAR2(50)
+    BASE  RESOLVER_CLASS                  VARCHAR2(240)
+    BASE  ACCESS_POINT                    VARCHAR2(240)
+    BASE  PARAMS                          REFERENCES BNE_PARAM_LISTS
+    TRANS USER_NAME                       VARCHAR2(240)
+    BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+  END BNE_MENUS
+
+    DEFINE BNE_MAPPINGS
+      KEY   MAPPING_ASN                     VARCHAR2(120)
+      KEY   MAPPING_CODE                    VARCHAR2(50)
+      BASE  REPORTING_FLAG                  VARCHAR2(1)
+      BASE  REPORTING_INTERFACE_ASN         VARCHAR2(120)
+      BASE  REPORTING_INTERFACE_CODE        VARCHAR2(30)
+      TRANS USER_NAME                       VARCHAR2(240)
+      CTX   OWNER                           VARCHAR2(120)
+      BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+      BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+
+      DEFINE BNE_MAPPING_LINES
+        KEY   SEQUENCE_NUM                    VARCHAR2(50)
+        BASE  INTERFACE_ASN                   VARCHAR2(120)
+        BASE  INTERFACE_CODE                  VARCHAR2(30)
+        BASE  INTERFACE_SEQ_NUM               VARCHAR2(50)
+        CTX   OWNER                           VARCHAR2(120)
+        BASE  DECODE_FLAG                     VARCHAR2(1)
+        BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+        BASE  CONTENT_ASN                     VARCHAR2(120)
+        BASE  CONTENT_CODE                    VARCHAR2(30)
+        BASE  CONTENT_SEQ_NUM                 VARCHAR2(50)
+        BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+      END BNE_MAPPING_LINES
+    END BNE_MAPPINGS
+
+      DEFINE BNE_CONTENTS
+        KEY   CONTENT_ASN                     VARCHAR2(120)
+        KEY   CONTENT_CODE                    VARCHAR2(30)
+        BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+        CTX   OWNER                           VARCHAR2(120)
+        BASE  CONTENT                         REFERENCES BNE_PARAM_LISTS
+        BASE  CONTENT_CLASS                   VARCHAR2(240)
+        TRANS USER_NAME                       VARCHAR2(240)
+        BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+        BASE  ONCE_ONLY_DOWNLOAD_FLAG         VARCHAR2(1)
+
+        DEFINE BNE_STORED_SQL
+          BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+          BASE  QUERY                           VARCHAR2(2000)
+          BASE  BNE_QUERY                       REFERENCES BNE_QUERIES
+          CTX   OWNER                           VARCHAR2(120)
+          BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+        END BNE_STORED_SQL
+
+          DEFINE BNE_CONTENT_COLS
+            KEY   SEQUENCE_NUM                    VARCHAR2(50)
+            BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+            CTX   OWNER                           VARCHAR2(120)
+            BASE  COL_NAME                        VARCHAR2(240)
+            TRANS USER_NAME                       VARCHAR2(240)
+            BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+            BASE  READ_ONLY_FLAG                  VARCHAR2(1)
+          END BNE_CONTENT_COLS
+      END BNE_CONTENTS
+
+        DEFINE BNE_LAYOUTS
+          KEY   LAYOUT_ASN                      VARCHAR2(120)
+          KEY   LAYOUT_CODE                     VARCHAR2(30)
+          CTX   OWNER                           VARCHAR2(120)
+          BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+          BASE  STYLESHEET_ASN                  VARCHAR2(120)
+          BASE  STYLESHEET_CODE                 VARCHAR2(30)
+          BASE  STYLE                           VARCHAR2(2000)
+          BASE  STYLE_CLASS                     VARCHAR2(50)
+          BASE  REPORTING_FLAG                  VARCHAR2(1)
+          BASE  REPORTING_INTERFACE_ASN         VARCHAR2(120)
+          BASE  REPORT_INTERFACE_CODE           VARCHAR2(30)
+          TRANS USER_NAME                       VARCHAR2(240)
+          BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+          BASE  CREATE_DOC                      REFERENCES BNE_PARAM_LISTS
+
+          DEFINE BNE_LAYOUT_BLOCKS
+            KEY   BLOCK_ID                        VARCHAR2(50)
+            CTX   OWNER                           VARCHAR2(120)
+            BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+            BASE  PARENT_ID                       VARCHAR2(50)
+            BASE  LAYOUT_ELEMENT                  VARCHAR2(240)
+            BASE  STYLE_CLASS                     VARCHAR2(50)
+            BASE  STYLE                           VARCHAR2(2000)
+            BASE  ROW_STYLE_CLASS                 VARCHAR2(50)
+            BASE  ROW_STYLE                       VARCHAR2(2000)
+            BASE  COL_STYLE_CLASS                 VARCHAR2(50)
+            BASE  COL_STYLE                       VARCHAR2(2000)
+            BASE  PROMPT_DISPLAYED_FLAG           VARCHAR2(1)
+            BASE  PROMPT_STYLE_CLASS              VARCHAR2(50)
+            BASE  PROMPT_STYLE                    VARCHAR2(2000)
+            BASE  HINT_DISPLAYED_FLAG             VARCHAR2(1)
+            BASE  HINT_STYLE_CLASS                VARCHAR2(50)
+            BASE  HINT_STYLE                      VARCHAR2(2000)
+            BASE  ORIENTATION                     VARCHAR2(20)
+            BASE  LAYOUT_CONTROL                  VARCHAR2(20)
+            BASE  DISPLAY_FLAG                    VARCHAR2(1)
+            BASE  BLOCKSIZE                       VARCHAR2(50)
+            BASE  MINSIZE                         VARCHAR2(50)
+            BASE  MAXSIZE                         VARCHAR2(50)
+            BASE  SEQUENCE_NUM                    VARCHAR2(50)
+            BASE  PROMPT_COLSPAN                  VARCHAR2(50)
+            BASE  HINT_COLSPAN                    VARCHAR2(50)
+            BASE  ROW_COLSPAN                     VARCHAR2(50)
+            BASE  SUMMARY_STYLE_CLASS             VARCHAR2(50)
+            BASE  SUMMARY_STYLE                   VARCHAR2(2000)
+            TRANS USER_NAME                       VARCHAR2(240)
+            BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+            BASE  TITLE_STYLE_CLASS               VARCHAR2(50)
+            BASE  TITLE_STYLE                     VARCHAR2(2000)
+            BASE  PROMPT_ABOVE                    VARCHAR2(240)
+
+            DEFINE BNE_LAYOUT_COLS
+              KEY   SEQUENCE_NUM                    VARCHAR2(50)
+              CTX   OWNER                           VARCHAR2(120)
+              BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+              BASE  INTERFACE_ASN                   VARCHAR2(120)
+              BASE  INTERFACE_CODE                  VARCHAR2(30)
+              BASE  INTERFACE_SEQ_NUM               VARCHAR2(50)
+              BASE  STYLE_CLASS                     VARCHAR2(50)
+              BASE  STYLE                           VARCHAR2(2000)
+              BASE  PROMPT_STYLE_CLASS              VARCHAR2(50)
+              BASE  PROMPT_STYLE                    VARCHAR2(2000)
+              BASE  HINT_STYLE_CLASS                VARCHAR2(50)
+              BASE  HINT_STYLE                      VARCHAR2(2000)
+              BASE  DEFAULT_VALUE                   VARCHAR2(2000)
+              BASE  DEFAULT_TYPE                    VARCHAR2(30)
+              BASE  DISPLAY_WIDTH                   VARCHAR2(50)
+              BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+              BASE  READ_ONLY_FLAG                  VARCHAR2(1)
+            END BNE_LAYOUT_COLS
+          END BNE_LAYOUT_BLOCKS
+        END BNE_LAYOUTS
+
+          DEFINE BNE_DUPLICATE_PROFILES
+            KEY   DUP_PROFILE_ASN                 VARCHAR2(120)
+            KEY   DUP_PROFILE_CODE                VARCHAR2(30)
+            CTX   OWNER                           VARCHAR2(120)
+            BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+            TRANS USER_NAME                       VARCHAR2(240)
+            BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+
+            DEFINE BNE_DUP_INTERFACE_PROFILES
+              KEY   INTERFACE_ASN                   VARCHAR2(120)
+              KEY   INTERFACE_CODE                  VARCHAR2(30)
+              CTX   OWNER                           VARCHAR2(120)
+              BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+              BASE  DUP_HANDLING_CODE               VARCHAR2(30)
+              BASE  DEFAULT_RESOLVER_CLASSNAME      VARCHAR2(240)
+              BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+
+              DEFINE BNE_DUP_INTERFACE_COLS
+                KEY   INTERFACE_SEQ_NUM               VARCHAR2(50)
+                CTX   OWNER                           VARCHAR2(120)
+                BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+                BASE  RESOLVER_CLASSNAME              VARCHAR2(240)
+                BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+              END BNE_DUP_INTERFACE_COLS
+            END BNE_DUP_INTERFACE_PROFILES
+          END BNE_DUPLICATE_PROFILES
+
+            DEFINE BNE_IMPORT_PROGRAMS
+              KEY   SEQUENCE_NUM                    VARCHAR2(50)
+              CTX   OWNER                           VARCHAR2(120)
+              BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+              BASE  PARENT_SEQ_NUM                  VARCHAR2(50)
+              BASE  IMPORT_TYPE                     VARCHAR2(50)
+              BASE  IMPORT                          REFERENCES BNE_PARAM_LISTS
+              BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+
+              DEFINE BNE_IMPORT_PROGRAMS_LISTS
+                KEY   IMPORT_PARAM_LIST_ASN           VARCHAR2(120)
+                KEY   IMPORT_PARAM_LIST_CODE          VARCHAR2(30)
+              END BNE_IMPORT_PROGRAMS_LISTS
+            END BNE_IMPORT_PROGRAMS
+
+              DEFINE BNE_INTERFACES
+                KEY   INTERFACE_ASN                   VARCHAR2(120)
+                KEY   INTERFACE_CODE                  VARCHAR2(30)
+                CTX   OWNER                           VARCHAR2(120)
+                BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+                BASE  INTERFACE_NAME                  VARCHAR2(50)
+                BASE  UPLOAD_TYPE                     VARCHAR2(50)
+                BASE  UPLOAD_OBJ_NAME                 VARCHAR2(240)
+                BASE  UPLOAD_PARAMS                   REFERENCES BNE_PARAM_LISTS
+                BASE  UPLOAD_ORDER                    VARCHAR2(50)
+                TRANS USER_NAME                       VARCHAR2(240)
+                BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+
+                DEFINE BNE_INTERFACE_COLS
+                  KEY   SEQUENCE_NUM                    VARCHAR2(50)
+                  CTX   OWNER                           VARCHAR2(120)
+                  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+                  BASE  INTERFACE_COL_TYPE              VARCHAR2(50)
+                  BASE  INTERFACE_COL_NAME              VARCHAR2(50)
+                  BASE  ENABLED_FLAG                    VARCHAR2(1)
+                  BASE  REQUIRED_FLAG                   VARCHAR2(1)
+                  BASE  DISPLAY_FLAG                    VARCHAR2(1)
+                  BASE  READ_ONLY_FLAG                  VARCHAR2(1)
+                  BASE  NOT_NULL_FLAG                   VARCHAR2(1)
+                  BASE  SUMMARY_FLAG                    VARCHAR2(1)
+                  BASE  MAPPING_ENABLED_FLAG            VARCHAR2(1)
+                  BASE  DATA_TYPE                       VARCHAR2(50)
+                  BASE  FIELD_SIZE                      VARCHAR2(50)
+                  BASE  DEFAULT_TYPE                    VARCHAR2(30)
+                  BASE  DEFAULT_VALUE                   VARCHAR2(200)
+                  BASE  SEGMENT_NUMBER                  VARCHAR2(50)
+                  BASE  GROUP_NAME                      VARCHAR2(30)
+                  BASE  OA_FLEX_CODE                    VARCHAR2(30)
+                  BASE  OA_CONCAT_FLEX                  VARCHAR2(30)
+                  BASE  VAL_TYPE                        VARCHAR2(20)
+                  BASE  VAL_ID_COL                      VARCHAR2(240)
+                  BASE  VAL_MEAN_COL                    VARCHAR2(240)
+                  BASE  VAL_DESC_COL                    VARCHAR2(240)
+                  BASE  VAL_OBJ_NAME                    VARCHAR2(240)
+                  BASE  VAL_ADDL_W_C                    VARCHAR2(2000)
+                  BASE  VAL_COMPONENT                   REFERENCES BNE_COMPONENTS
+                  BASE  OA_FLEX_NUM                     VARCHAR2(50)
+                  BASE  OA_FLEX_APPLICATION_ID          VARCHAR2(50)
+                  BASE  DISPLAY_ORDER                   VARCHAR2(50)
+                  BASE  UPLOAD_PARAM_LIST_ITEM_NUM      VARCHAR2(50)
+                  BASE  EXPANDED_SQL_QUERY              VARCHAR2(2000)
+                  TRANS USER_HINT                       VARCHAR2(2000)
+                  TRANS PROMPT_LEFT                     VARCHAR2(240)
+                  TRANS PROMPT_ABOVE                    VARCHAR2(240)
+                  TRANS USER_HELP_TEXT                  VARCHAR2(2000)
+                  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+                  BASE  LOV_TYPE                        VARCHAR2(30)
+                  BASE  OFFLINE_LOV_ENABLED_FLAG        VARCHAR2(1)
+                  BASE  VARIABLE_DATA_TYPE_CLASS        VARCHAR2(240)
+                  BASE  VIEWER_GROUP                    VARCHAR2(30)
+                  BASE  EDIT_TYPE                       VARCHAR2(30)
+                  BASE  DISPLAY_WIDTH                   VARCHAR2(50)
+                  BASE  VAL_QUERY                       REFERENCES BNE_QUERIES
+                  BASE  EXPANDED_SQL                    REFERENCES BNE_QUERIES
+                END BNE_INTERFACE_COLS
+
+                  DEFINE BNE_INTERFACE_KEYS
+                    KEY   KEY_ASN                         VARCHAR2(120)
+                    KEY   KEY_CODE                        VARCHAR2(30)
+                    CTX   OWNER                           VARCHAR2(120)
+                    BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+                    BASE  KEY_TYPE                        VARCHAR2(30)
+                    BASE  KEY_CLASS                       VARCHAR2(240)
+                    BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+
+                    DEFINE BNE_INTERFACE_KEY_COLS
+                      KEY   SEQUENCE_NUM                    VARCHAR2(50)
+                      CTX   OWNER                           VARCHAR2(120)
+                      BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+                      BASE  INTERFACE_ASN                   VARCHAR2(120)
+                      BASE  INTERFACE_CODE                  VARCHAR2(30)
+                      BASE  INTERFACE_SEQ_NUM               VARCHAR2(50)
+                      BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+                    END BNE_INTERFACE_KEY_COLS
+                  END BNE_INTERFACE_KEYS
+              END BNE_INTERFACES
+
+                DEFINE BNE_INTEGRATOR_VIEWERS
+                  KEY   VIEWER_ASN                      VARCHAR2(120)
+                  KEY   VIEWER_CODE                     VARCHAR2(30)
+                  CTX   OWNER                           VARCHAR2(120)
+                  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+                  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+                END BNE_INTEGRATOR_VIEWERS
+
+                  DEFINE BNE_GRAPHS
+                    KEY   GRAPH_SEQ_NUM                   VARCHAR2(50)
+                    CTX   OWNER                           VARCHAR2(120)
+                    BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+                    BASE  LAYOUT_ASN                      VARCHAR2(120)
+                    BASE  LAYOUT_CODE                     VARCHAR2(30)
+                    BASE  GRAPH_DIMENSION_CODE            VARCHAR2(30)
+                    BASE  GRAPH_TYPE_CODE                 VARCHAR2(30)
+                    BASE  AUTO_GRAPH_FLAG                 VARCHAR2(1)
+                    TRANS CHART_TITLE                     VARCHAR2(240)
+                    TRANS X_AXIS_LABEL                    VARCHAR2(240)
+                    TRANS Y_AXIS_LABEL                    VARCHAR2(240)
+                    TRANS Z_AXIS_LABEL                    VARCHAR2(2000)
+                    BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+
+                    DEFINE BNE_GRAPH_COLUMNS
+                      KEY   GRAPH_COL_SEQ_NUM               VARCHAR2(50)
+                      CTX   OWNER                           VARCHAR2(120)
+                      BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+                      BASE  INTERFACE_ASN                   VARCHAR2(120)
+                      BASE  INTERFACE_CODE                  VARCHAR2(30)
+                      BASE  INTERFACE_SEQ_NUM               VARCHAR2(50)
+                      BASE  LOCATION_CODE                   VARCHAR2(30)
+                      BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+                    END BNE_GRAPH_COLUMNS
+                  END BNE_GRAPHS
+
+                    DEFINE BNE_INTEGRATOR_MENU_LISTS
+                      KEY   MENU_PARAM_LIST_ASN             VARCHAR2(120)
+                      KEY   MENU_PARAM_LIST_CODE            VARCHAR2(30)
+                    END BNE_INTEGRATOR_MENU_LISTS
+
+                      DEFINE BNE_INTEGRATOR_IMPORT_LISTS
+                        KEY   IMPORT_PARAM_LIST_ASN           VARCHAR2(120)
+                        KEY   IMPORT_PARAM_LIST_CODE          VARCHAR2(30)
+                      END BNE_INTEGRATOR_IMPORT_LISTS
+END BNE_INTEGRATORS
+
+DEFINE BNE_SECURED_OBJECTS
+  KEY   SECURED_OBJECT_ASN              VARCHAR2(120)
+  KEY   SECURED_OBJECT_CODE             VARCHAR2(30)
+  KEY   SECURED_OBJECT_TYPE             VARCHAR2(30)
+  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+  BASE  RULE                            REFERENCES BNE_SECURITY_RULES
+  CTX   OWNER                           VARCHAR2(120)
+  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+END BNE_SECURED_OBJECTS
+
+DEFINE BNE_QUERIES
+  KEY   QUERY_ASN                       VARCHAR2(120)
+  KEY   QUERY_CODE                      VARCHAR2(30)
+  CTX   OWNER                           VARCHAR2(120)
+  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+  BASE  QUERY_CLASS                     VARCHAR2(240)
+  TRANS USER_NAME                       VARCHAR2(240)
+  BASE  CACHE                           REFERENCES BNE_CACHE_DIRECTIVES
+
+  DEFINE BNE_RAW_QUERY
+    KEY   SEQUENCE_NUM                    VARCHAR2(50)
+    CTX   OWNER                           VARCHAR2(120)
+    BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+    BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+    BASE  QUERY                           VARCHAR2(2000)
+  END BNE_RAW_QUERY
+
+    DEFINE BNE_SIMPLE_QUERY
+      CTX   OWNER                           VARCHAR2(120)
+      BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+      BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+      BASE  ID_COL                          VARCHAR2(2000)
+      BASE  ID_COL_ALIAS                    VARCHAR2(2000)
+      BASE  MEANING_COL                     VARCHAR2(2000)
+      BASE  MEANING_COL_ALIAS               VARCHAR2(2000)
+      BASE  DESCRIPTION_COL                 VARCHAR2(2000)
+      BASE  DESCRIPTION_COL_ALIAS           VARCHAR2(2000)
+      BASE  ADDITIONAL_COLS                 VARCHAR2(2000)
+      BASE  OBJECT_NAME                     VARCHAR2(2000)
+      BASE  ADDITIONAL_WHERE_CLAUSE         VARCHAR2(2000)
+      BASE  ORDER_BY_CLAUSE                 VARCHAR2(2000)
+    END BNE_SIMPLE_QUERY
+END BNE_QUERIES
+
+DEFINE BNE_PARAM_LISTS
+  KEY   PARAM_LIST_ASN                  VARCHAR2(120)
+  KEY   PARAM_LIST_CODE                 VARCHAR2(30)
+  CTX   OWNER                           VARCHAR2(120)
+  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+  BASE  PERSISTENT_FLAG                 VARCHAR2(1)
+  BASE  COMMENTS                        VARCHAR2(240)
+  BASE  LIST                            REFERENCES BNE_ATTRIBUTES
+  BASE  LIST_RESOLVER                   VARCHAR2(240)
+  TRANS USER_TIP                        VARCHAR2(2000)
+  TRANS PROMPT_LEFT                     VARCHAR2(240)
+  TRANS PROMPT_ABOVE                    VARCHAR2(240)
+  TRANS USER_NAME                       VARCHAR2(240)
+
+  DEFINE BNE_PARAM_GROUPS
+    KEY   GROUP_SEQ_NUM                   VARCHAR2(50)
+    CTX   OWNER                           VARCHAR2(120)
+    BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+    BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+    BASE  GROUP_ITEM                      REFERENCES BNE_ATTRIBUTES
+    BASE  GROUP_RESOLVER                  VARCHAR2(240)
+    TRANS USER_NAME                       VARCHAR2(240)
+
+    DEFINE BNE_PARAM_GROUP_ITEMS
+      KEY   SEQUENCE_NUM                    VARCHAR2(50)
+      CTX   OWNER                           VARCHAR2(120)
+      BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+      BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+      BASE  PARAM_SEQ_NUM                   VARCHAR2(50)
+    END BNE_PARAM_GROUP_ITEMS
+  END BNE_PARAM_GROUPS
+
+    DEFINE BNE_PARAM_LIST_ITEMS
+      KEY   SEQUENCE_NUM                    VARCHAR2(50)
+      CTX   OWNER                           VARCHAR2(120)
+      BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+      BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+      BASE  DEFN                            REFERENCES BNE_PARAM_DEFNS
+      BASE  PARAM_NAME                      VARCHAR2(240)
+      BASE  LIST_ITEM                       REFERENCES BNE_ATTRIBUTES
+      BASE  STRING_VALUE                    VARCHAR2(2000)
+      BASE  DATE_VALUE                      VARCHAR2(19)
+      BASE  NUMBER_VALUE                    VARCHAR2(50)
+      BASE  BOOLEAN_VALUE_FLAG              VARCHAR2(1)
+      BASE  FORMULA_VALUE                   VARCHAR2(240)
+      BASE  DESC_VALUE                      VARCHAR2(240)
+    END BNE_PARAM_LIST_ITEMS
+END BNE_PARAM_LISTS
+
+DEFINE BNE_COMPONENTS
+  KEY   COMPONENT_ASN                   VARCHAR2(120)
+  KEY   COMPONENT_CODE                  VARCHAR2(30)
+  CTX   OWNER                           VARCHAR2(120)
+  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+  BASE  COMPONENT_JAVA_CLASS            VARCHAR2(240)
+  BASE  PARAM                           REFERENCES BNE_PARAM_LISTS
+  TRANS USER_NAME                       VARCHAR2(240)
+END BNE_COMPONENTS
+
+DEFINE BNE_SECURITY_RULES
+  KEY   SECURITY_RULE_ASN               VARCHAR2(120)
+  KEY   SECURITY_RULE_CODE              VARCHAR2(30)
+  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+  BASE  SECURITY_TYPE                   VARCHAR2(30)
+  BASE  SECURITY_VALUE                  VARCHAR2(2000)
+  CTX   OWNER                           VARCHAR2(120)
+  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+END BNE_SECURITY_RULES
+
+DEFINE BNE_CACHE_DIRECTIVES
+  KEY   DIRECTIVE_ASN                   VARCHAR2(120)
+  KEY   DIRECTIVE_CODE                  VARCHAR2(30)
+  CTX   OWNER                           VARCHAR2(120)
+  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+  BASE  MAX_SIZE                        VARCHAR2(50)
+  BASE  MAX_HITS                        VARCHAR2(50)
+  BASE  MAX_AGE                         VARCHAR2(240)
+  BASE  DISCRIMINATOR_TYPE              VARCHAR2(30)
+  BASE  DISCRIMINATOR_VALUE             VARCHAR2(2000)
+  TRANS USER_NAME                       VARCHAR2(240)
+END BNE_CACHE_DIRECTIVES
+
+DEFINE BNE_ATTRIBUTES
+  KEY   ATTRIBUTE_ASN                   VARCHAR2(120)
+  KEY   ATTRIBUTE_CODE                  VARCHAR2(30)
+  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+  BASE  ATTRIBUTE1                      VARCHAR2(2000)
+  BASE  ATTRIBUTE2                      VARCHAR2(2000)
+  BASE  ATTRIBUTE3                      VARCHAR2(2000)
+  BASE  ATTRIBUTE4                      VARCHAR2(2000)
+  BASE  ATTRIBUTE5                      VARCHAR2(2000)
+  BASE  ATTRIBUTE6                      VARCHAR2(2000)
+  BASE  ATTRIBUTE7                      VARCHAR2(2000)
+  BASE  ATTRIBUTE8                      VARCHAR2(2000)
+  BASE  ATTRIBUTE9                      VARCHAR2(2000)
+  BASE  ATTRIBUTE10                     VARCHAR2(2000)
+  BASE  ATTRIBUTE11                     VARCHAR2(2000)
+  BASE  ATTRIBUTE12                     VARCHAR2(2000)
+  BASE  ATTRIBUTE13                     VARCHAR2(2000)
+  BASE  ATTRIBUTE14                     VARCHAR2(2000)
+  BASE  ATTRIBUTE15                     VARCHAR2(2000)
+  BASE  ATTRIBUTE16                     VARCHAR2(2000)
+  BASE  ATTRIBUTE17                     VARCHAR2(2000)
+  BASE  ATTRIBUTE18                     VARCHAR2(2000)
+  BASE  ATTRIBUTE19                     VARCHAR2(2000)
+  BASE  ATTRIBUTE20                     VARCHAR2(2000)
+  BASE  ATTRIBUTE21                     VARCHAR2(2000)
+  BASE  ATTRIBUTE22                     VARCHAR2(2000)
+  BASE  ATTRIBUTE23                     VARCHAR2(2000)
+  BASE  ATTRIBUTE24                     VARCHAR2(2000)
+  BASE  ATTRIBUTE25                     VARCHAR2(2000)
+  BASE  ATTRIBUTE26                     VARCHAR2(2000)
+  BASE  ATTRIBUTE27                     VARCHAR2(2000)
+  BASE  ATTRIBUTE28                     VARCHAR2(2000)
+  BASE  ATTRIBUTE29                     VARCHAR2(2000)
+  BASE  ATTRIBUTE30                     VARCHAR2(2000)
+  CTX   OWNER                           VARCHAR2(120)
+  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+  BASE  ATTRIBUTE_NAME1                 VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME2                 VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME3                 VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME4                 VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME5                 VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME6                 VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME7                 VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME8                 VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME9                 VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME10                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME11                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME12                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME13                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME14                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME15                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME16                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME17                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME18                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME19                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME20                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME21                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME22                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME23                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME24                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME25                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME26                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME27                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME28                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME29                VARCHAR2(30)
+  BASE  ATTRIBUTE_NAME30                VARCHAR2(30)
+END BNE_ATTRIBUTES
+
+DEFINE BNE_PARAM_DEFNS
+  KEY   PARAM_DEFN_ASN                  VARCHAR2(120)
+  KEY   PARAM_DEFN_CODE                 VARCHAR2(30)
+  BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+  BASE  PARAM_NAME                      VARCHAR2(240)
+  BASE  PARAM_SOURCE                    VARCHAR2(240)
+  BASE  PARAM_CATEGORY                  VARCHAR2(50)
+  BASE  DATATYPE                        VARCHAR2(50)
+  BASE  DEFN                            REFERENCES BNE_ATTRIBUTES
+  BASE  PARAM_RESOLVER                  VARCHAR2(240)
+  BASE  DEFAULT_REQUIRED_FLAG           VARCHAR2(1)
+  BASE  DEFAULT_VISIBLE_FLAG            VARCHAR2(1)
+  BASE  DEFAULT_USER_MODIFYABLE_FLAG    VARCHAR2(1)
+  BASE  DEFAULT_STRING                  VARCHAR2(2000)
+  TRANS DEFAULT_STRING_TRANS            VARCHAR2(2000)
+  BASE  DEFAULT_STRING_TRANS_FLAG       VARCHAR2(1)
+  BASE  DEFAULT_DATE                    VARCHAR2(19)
+  BASE  DEFAULT_NUMBER                  VARCHAR2(50)
+  BASE  DEFAULT_BOOLEAN_FLAG            VARCHAR2(1)
+  BASE  DEFAULT_FORMULA                 VARCHAR2(240)
+  BASE  VAL_TYPE                        VARCHAR2(30)
+  BASE  VAL_VALUE                       VARCHAR2(30)
+  BASE  VAL_BNE_QUERY                   REFERENCES BNE_QUERIES
+  BASE  MAX_SIZE                        VARCHAR2(50)
+  BASE  DISPLAY_TYPE                    VARCHAR2(50)
+  BASE  DISPLAY_STYLE                   VARCHAR2(50)
+  BASE  DISPLAY_SIZE                    VARCHAR2(50)
+  BASE  HELP_URL                        VARCHAR2(240)
+  BASE  FORMAT_MASK                     VARCHAR2(240)
+  TRANS USER_NAME                       VARCHAR2(240)
+  TRANS DEFAULT_DESC                    VARCHAR2(240)
+  TRANS PROMPT_LEFT                     VARCHAR2(240)
+  TRANS PROMPT_ABOVE                    VARCHAR2(240)
+  TRANS USER_TIP                        VARCHAR2(2000)
+  TRANS ACCESS_KEY                      VARCHAR2(30)
+  CTX   OWNER                           VARCHAR2(120)
+  BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+  BASE  OA_FLEX_ASN                     VARCHAR2(120)
+  BASE  OA_FLEX_CODE                    VARCHAR2(30)
+  BASE  OA_FLEX_NUM                     VARCHAR2(2000)
+
+  DEFINE BNE_PARAM_DEFN_OVERRIDES
+    KEY   LVL                             VARCHAR2(50)
+    KEY   OVERRIDE_ID                     VARCHAR2(50)
+    BASE  OBJECT_VERSION_NUMBER           VARCHAR2(50)
+    BASE  REQUIRED_FLAG                   VARCHAR2(1)
+    BASE  VISIBLE_FLAG                    VARCHAR2(1)
+    BASE  USER_MODIFYABLE_FLAG            VARCHAR2(1)
+    BASE  DEFAULT_STRING                  VARCHAR2(2000)
+    BASE  DEFAULT_DATE                    VARCHAR2(19)
+    BASE  DEFAULT_NUMBER                  VARCHAR2(50)
+    BASE  DEFAULT_BOOLEAN_FLAG            VARCHAR2(1)
+    BASE  DEFAULT_FORMULA                 VARCHAR2(240)
+    BASE  DESC_VALUE                      VARCHAR2(240)
+    CTX   OWNER                           VARCHAR2(120)
+    BASE  LAST_UPDATE_DATE                VARCHAR2(10)
+  END BNE_PARAM_DEFN_OVERRIDES
+END BNE_PARAM_DEFNS
+
+# -- End Entity Definitions -- 
+
+
+BEGIN BNE_PARAM_DEFNS "GEOGONT" "GEOG_OM_SO_ADI_2_UPL1"
+  OBJECT_VERSION_NUMBER = "1"
+  PARAM_NAME = "bne:rows"
+  PARAM_SOURCE = "DIF:Upload"
+  PARAM_CATEGORY = "1"
+  DATATYPE = "1"
+  DEFN = "" ""
+  DEFAULT_REQUIRED_FLAG = "N"
+  DEFAULT_VISIBLE_FLAG = "Y"
+  DEFAULT_USER_MODIFYABLE_FLAG = "Y"
+  DEFAULT_STRING_TRANS = "Y"
+  DEFAULT_STRING_TRANS_FLAG = "Y"
+  VAL_TYPE = "3"
+  VAL_VALUE = "BNE_ROWS"
+  VAL_BNE_QUERY = "" ""
+  MAX_SIZE = "100"
+  DISPLAY_TYPE = "2"
+  DISPLAY_STYLE = "2"
+  DISPLAY_SIZE = "100"
+  USER_NAME = "bne:rows"
+  DEFAULT_DESC = "Flegged Rows"
+  PROMPT_LEFT = "Rows to Upload"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+
+END BNE_PARAM_DEFNS
+
+BEGIN BNE_PARAM_DEFNS "GEOGONT" "GEOG_OM_SO_ADI_2_UPL2"
+  OBJECT_VERSION_NUMBER = "1"
+  PARAM_NAME = "bne:validation"
+  PARAM_SOURCE = "DIF:Upload"
+  PARAM_CATEGORY = "1"
+  DATATYPE = "4"
+  DEFN = "" ""
+  DEFAULT_REQUIRED_FLAG = "N"
+  DEFAULT_VISIBLE_FLAG = "Y"
+  DEFAULT_USER_MODIFYABLE_FLAG = "Y"
+  DEFAULT_STRING_TRANS_FLAG = "N"
+  DEFAULT_BOOLEAN_FLAG = "Y"
+  VAL_TYPE = "1"
+  VAL_BNE_QUERY = "" ""
+  MAX_SIZE = "100"
+  DISPLAY_TYPE = "1"
+  DISPLAY_STYLE = "1"
+  DISPLAY_SIZE = "100"
+  USER_NAME = "bne:validation"
+  DEFAULT_DESC =
+ "Choose the type of validation to be used during the upload process"
+  PROMPT_LEFT = "Validate Before Upload"
+  PROMPT_ABOVE = "Validate Before Upload"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+
+END BNE_PARAM_DEFNS
+
+BEGIN BNE_PARAM_DEFNS "GEOGONT" "GEOG_OM_SO_ADI_2_UPL3"
+  OBJECT_VERSION_NUMBER = "1"
+  PARAM_NAME = "bne:import"
+  PARAM_SOURCE = "DIF:Upload"
+  PARAM_CATEGORY = "1"
+  DATATYPE = "4"
+  DEFN = "" ""
+  DEFAULT_REQUIRED_FLAG = "N"
+  DEFAULT_VISIBLE_FLAG = "Y"
+  DEFAULT_USER_MODIFYABLE_FLAG = "Y"
+  DEFAULT_STRING_TRANS_FLAG = "N"
+  VAL_TYPE = "1"
+  VAL_BNE_QUERY = "" ""
+  MAX_SIZE = "100"
+  DISPLAY_TYPE = "1"
+  DISPLAY_STYLE = "1"
+  DISPLAY_SIZE = "100"
+  USER_NAME = "bne:import"
+  PROMPT_LEFT = "Automatically Submit Import"
+  USER_TIP =
+ "Import will be automatically submitted on successful completion of the upload"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+
+END BNE_PARAM_DEFNS
+
+BEGIN BNE_PARAM_LISTS "GEOGONT" "GEOG_OM_SO_ADI_2_UPL"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+  OBJECT_VERSION_NUMBER = "1"
+  PERSISTENT_FLAG = "Y"
+  COMMENTS = "Upload Page"
+  LIST = "" ""
+  USER_NAME = "GEOG OM Sales Order Lines Integrator_2 - Uploader"
+
+  BEGIN BNE_PARAM_LIST_ITEMS "1"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "GEOGONT" "GEOG_OM_SO_ADI_2_UPL1"
+    PARAM_NAME = "bne:rows"
+    LIST_ITEM = "" ""
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "2"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "GEOGONT" "GEOG_OM_SO_ADI_2_UPL2"
+    PARAM_NAME = "bne:validation"
+    LIST_ITEM = "" ""
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "3"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "GEOGONT" "GEOG_OM_SO_ADI_2_UPL3"
+    PARAM_NAME = "bne:import"
+    LIST_ITEM = "" ""
+  END BNE_PARAM_LIST_ITEMS
+  
+
+END BNE_PARAM_LISTS
+
+BEGIN BNE_PARAM_LISTS "GEOGONT" "GEOG_OM_SO_ADI_2_IMP"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+  OBJECT_VERSION_NUMBER = "2"
+  PERSISTENT_FLAG = "Y"
+  LIST = "" ""
+  USER_NAME = "GEOG OM Sales Order Lines Importer_2"
+
+  BEGIN BNE_PARAM_LIST_ITEMS "1"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/10/17"
+    OBJECT_VERSION_NUMBER = "3"
+    DEFN = "" ""
+    PARAM_NAME = "GROUP"
+    LIST_ITEM = "" ""
+    STRING_VALUE = "20014:GEOG_OM_SO_ADI_2_GRP"
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "2"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/10/17"
+    OBJECT_VERSION_NUMBER = "3"
+    DEFN = "" ""
+    PARAM_NAME = "ROW_MAPPING"
+    LIST_ITEM = "" ""
+    STRING_VALUE = "20014:GEOG_OM_SO_ADI_2_RMP"
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "3"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/10/17"
+    OBJECT_VERSION_NUMBER = "3"
+    DEFN = "" ""
+    PARAM_NAME = "CONCURRENT_REQUEST"
+    LIST_ITEM = "" ""
+    STRING_VALUE = "20014:GEOG_OM_SO_ADI_2_CP"
+  END BNE_PARAM_LIST_ITEMS
+  
+
+END BNE_PARAM_LISTS
+
+BEGIN BNE_SECURITY_RULES "GEOGONT" "GEOG_OM_SO_ADI_2_SRULE"
+  OBJECT_VERSION_NUMBER = "3"
+  SECURITY_TYPE = "FUNCTION"
+  SECURITY_VALUE =
+ "BNE_ADI_CREATE_DOCUMENT,BNE_ADI_DEFINE_LAYOUT,BNE_CREATE_DOCUMENT,GEOG_OM_SO_ADI"
+  OWNER = "503095128"
+  LAST_UPDATE_DATE = "2021/09/01"
+END BNE_SECURITY_RULES
+
+BEGIN BNE_SECURED_OBJECTS "GEOGONT" "GEOG_OM_SO_ADI_2_XINTG" "INTEGRATOR"
+  OBJECT_VERSION_NUMBER = "1"
+  RULE = "GEOGONT" "GEOG_OM_SO_ADI_2_SRULE"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+END BNE_SECURED_OBJECTS
+
+BEGIN BNE_ATTRIBUTES "GEOGONT" "GEOG_OM_SO_ADI_2_XA1"
+  OBJECT_VERSION_NUMBER = "1"
+  ATTRIBUTE1 = "APPLICATION"
+  ATTRIBUTE2 = "VARCHAR2"
+  ATTRIBUTE3 = "IN"
+  ATTRIBUTE4 = "N"
+  ATTRIBUTE5 = "'GEOGONT'"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+END BNE_ATTRIBUTES
+
+BEGIN BNE_ATTRIBUTES "GEOGONT" "GEOG_OM_SO_ADI_2_XA2"
+  OBJECT_VERSION_NUMBER = "1"
+  ATTRIBUTE1 = "PROGRAM"
+  ATTRIBUTE2 = "VARCHAR2"
+  ATTRIBUTE3 = "IN"
+  ATTRIBUTE4 = "N"
+  ATTRIBUTE5 = "'GEOG_SO_WEBADI_PRS'"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+END BNE_ATTRIBUTES
+
+BEGIN BNE_ATTRIBUTES "GEOGONT" "GEOG_OM_SO_ADI_2_XA3"
+  OBJECT_VERSION_NUMBER = "1"
+  ATTRIBUTE1 = "DESCRIPTION"
+  ATTRIBUTE2 = "VARCHAR2"
+  ATTRIBUTE3 = "IN"
+  ATTRIBUTE4 = "N"
+  ATTRIBUTE5 = "''"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+END BNE_ATTRIBUTES
+
+BEGIN BNE_ATTRIBUTES "GEOGONT" "GEOG_OM_SO_ADI_2_XA4"
+  OBJECT_VERSION_NUMBER = "1"
+  ATTRIBUTE1 = "RUN_DATE"
+  ATTRIBUTE2 = "VARCHAR2"
+  ATTRIBUTE3 = "IN"
+  ATTRIBUTE4 = "N"
+  ATTRIBUTE5 = "''"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+END BNE_ATTRIBUTES
+
+BEGIN BNE_ATTRIBUTES "GEOGONT" "GEOG_OM_SO_ADI_2_XA5"
+  OBJECT_VERSION_NUMBER = "1"
+  ATTRIBUTE1 = "SUB_REQUEST"
+  ATTRIBUTE2 = "BOOLEAN"
+  ATTRIBUTE3 = "IN"
+  ATTRIBUTE4 = "N"
+  ATTRIBUTE5 = "FALSE"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+END BNE_ATTRIBUTES
+
+BEGIN BNE_ATTRIBUTES "GEOGONT" "GEOG_OM_SO_ADI_2_XA6"
+  OBJECT_VERSION_NUMBER = "2"
+  ATTRIBUTE1 = "P_GROUP_ID"
+  ATTRIBUTE2 = "NUMBER"
+  ATTRIBUTE3 = "IN"
+  ATTRIBUTE4 = "N"
+  ATTRIBUTE6 = "36"
+  ATTRIBUTE7 = "IMPORT"
+  ATTRIBUTE8 = "GEOG_OM_ORDER_LINES_INT.GROUP_ID"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+END BNE_ATTRIBUTES
+
+BEGIN BNE_ATTRIBUTES "GEOGONT" "GEOG_OM_SO_ADI_2_XA7"
+  OBJECT_VERSION_NUMBER = "1"
+  ATTRIBUTE1 = "END"
+  ATTRIBUTE2 = "VARCHAR2"
+  ATTRIBUTE3 = "IN"
+  ATTRIBUTE4 = "N"
+  ATTRIBUTE5 = "CHR(0)"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+END BNE_ATTRIBUTES
+
+BEGIN BNE_ATTRIBUTES "GEOGONT" "GEOG_OM_SO_ADI_2_XA8"
+  OBJECT_VERSION_NUMBER = "1"
+  ATTRIBUTE1 = "''"
+  ATTRIBUTE2 = "0"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+END BNE_ATTRIBUTES
+
+BEGIN BNE_PARAM_LISTS "GEOGONT" "GEOG_OM_SO_ADI_2_CP"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+  OBJECT_VERSION_NUMBER = "1"
+  PERSISTENT_FLAG = "Y"
+  COMMENTS = "Concurrent Program Request Submission"
+  LIST = "" ""
+  USER_NAME = "Concurrent Program Request Submission"
+
+  BEGIN BNE_PARAM_LIST_ITEMS "1"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "Application"
+    LIST_ITEM = "GEOGONT" "GEOG_OM_SO_ADI_2_XA1"
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "2"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "Program"
+    LIST_ITEM = "GEOGONT" "GEOG_OM_SO_ADI_2_XA2"
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "3"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "Description"
+    LIST_ITEM = "GEOGONT" "GEOG_OM_SO_ADI_2_XA3"
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "4"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "Run Date"
+    LIST_ITEM = "GEOGONT" "GEOG_OM_SO_ADI_2_XA4"
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "5"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "Sub request"
+    LIST_ITEM = "GEOGONT" "GEOG_OM_SO_ADI_2_XA5"
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "6"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "P_GROUP_ID"
+    LIST_ITEM = "GEOGONT" "GEOG_OM_SO_ADI_2_XA6"
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "7"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "End Of Concurrent Request Parameters"
+    LIST_ITEM = "GEOGONT" "GEOG_OM_SO_ADI_2_XA7"
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "8"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "Rest of Parameters Defaults"
+    LIST_ITEM = "GEOGONT" "GEOG_OM_SO_ADI_2_XA8"
+  END BNE_PARAM_LIST_ITEMS
+  
+
+END BNE_PARAM_LISTS
+
+BEGIN BNE_PARAM_LISTS "GEOGONT" "GEOG_OM_SO_ADI_2_GRP"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+  OBJECT_VERSION_NUMBER = "1"
+  PERSISTENT_FLAG = "Y"
+  COMMENTS = "Group Definition"
+  LIST = "" ""
+  USER_NAME = "Group Definition"
+
+  BEGIN BNE_PARAM_LIST_ITEMS "1"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "GEOG_OM_ORDER_LINES_INT.GROUP_ID"
+    LIST_ITEM = "" ""
+  END BNE_PARAM_LIST_ITEMS
+  
+
+END BNE_PARAM_LISTS
+
+BEGIN BNE_PARAM_LISTS "GEOGONT" "GEOG_OM_SO_ADI_2_RMP"
+  OWNER = "502262706"
+  LAST_UPDATE_DATE = "2019/09/02"
+  OBJECT_VERSION_NUMBER = "1"
+  PERSISTENT_FLAG = "Y"
+  COMMENTS = "Document Row : Interface Attribute Mapping"
+  LIST = "" ""
+  USER_NAME = "Document Row : Interface Attribute Mapping"
+
+  BEGIN BNE_PARAM_LIST_ITEMS "1"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "GEOG_OM_ORDER_LINES_INT.GROUP_ID"
+    LIST_ITEM = "" ""
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "2"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "GEOG_OM_ORDER_LINES_INT.ORDER_NUMBER"
+    LIST_ITEM = "" ""
+  END BNE_PARAM_LIST_ITEMS
+  
+  BEGIN BNE_PARAM_LIST_ITEMS "3"
+    OWNER = "502262706"
+    LAST_UPDATE_DATE = "2019/09/02"
+    OBJECT_VERSION_NUMBER = "1"
+    DEFN = "" ""
+    PARAM_NAME = "GEOG_OM_ORDER_LINES_INT.LINE_NUMBER"
+    LIST_ITEM = "" ""
+  END BNE_PARAM_LIST_ITEMS
+  
+
+END BNE_PARAM_LISTS
+
+BEGIN BNE_INTEGRATORS "GEOGONT" "GEOG_OM_SO_ADI_2_XINTG"
+  OWNER = "502262706"
+  OBJECT_VERSION_NUMBER = "3"
+  ENABLED_FLAG = "Y"
+  UPL = "GEOGONT" "GEOG_OM_SO_ADI_2_UPL"
+  UPL_SERV = "" ""
+  IMPORT = "GEOGONT" "GEOG_OM_SO_ADI_2_IMP"
+  DATE_FORMAT = "yyyy-MM-dd"
+  IMPORT_TYPE = "1"
+  USER_NAME = "GEOG OM Sales Order Lines Integrator_2"
+  UPLOAD_HEADER = "Upload Parameters"
+  UPLOAD_TITLE_BAR = "Upload Page"
+  LAST_UPDATE_DATE = "2019/09/02"
+  CREATE_DOC = "" ""
+  SESSION = "" ""
+  SECURITY = "GEOGONT" "GEOG_OM_SO_ADI_2_XINTG" "INTEGRATOR"
+  DISPLAY_FLAG = "Y"
+  SOURCE = "C"
+
+  BEGIN BNE_INTEGRATOR_IMPORT_LISTS "GEOGONT" "GEOG_OM_SO_ADI_2_CP"
+  END BNE_INTEGRATOR_IMPORT_LISTS
+  
+  BEGIN BNE_INTEGRATOR_IMPORT_LISTS "GEOGONT" "GEOG_OM_SO_ADI_2_GRP"
+  END BNE_INTEGRATOR_IMPORT_LISTS
+  
+  BEGIN BNE_INTEGRATOR_IMPORT_LISTS "GEOGONT" "GEOG_OM_SO_ADI_2_RMP"
+  END BNE_INTEGRATOR_IMPORT_LISTS
+  
+
+
+
+
+  BEGIN BNE_INTERFACES "GEOGONT" "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+    OWNER = "502262706"
+    OBJECT_VERSION_NUMBER = "1"
+    INTERFACE_NAME = "GEOG_OM_ORDER_LINES_INT"
+    UPLOAD_TYPE = "1"
+    UPLOAD_PARAMS = "" ""
+    UPLOAD_ORDER = "1"
+    USER_NAME = "GEOG OM Sales Order Lines Interface_4"
+    LAST_UPDATE_DATE = "2019/09/02"
+  
+  
+    BEGIN BNE_INTERFACE_COLS "1"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "2"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "GROUP_ID"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "N"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "Y"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      DEFAULT_TYPE = "SQL"
+      DEFAULT_VALUE = "SELECT GEOG_OM_ORDER_LINES_INT_S.NEXTVAL FROM DUAL"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "1"
+      PROMPT_LEFT = "GROUP_ID"
+      PROMPT_ABOVE = "GROUP_ID"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "2"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ORDER_NUMBER"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "Y"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "2"
+      PROMPT_LEFT = "ORDER_NUMBER"
+      PROMPT_ABOVE = "ORDER_NUMBER"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "3"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "HEADER_ID"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "3"
+      PROMPT_LEFT = "HEADER_ID"
+      PROMPT_ABOVE = "HEADER_ID"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "4"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "LINE_NUMBER"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "Y"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "20"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "4"
+      PROMPT_LEFT = "LINE_NUMBER"
+      PROMPT_ABOVE = "LINE_NUMBER"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "5"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ORDER_STATUS"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "30"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "5"
+      PROMPT_LEFT = "ORDER_STATUS"
+      PROMPT_ABOVE = "ORDER_STATUS"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "6"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "3"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "LINE_STATUS"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "30"
+      VAL_TYPE = "TABLE"
+      VAL_ID_COL = "lookup_code"
+      VAL_MEAN_COL = "meaning"
+      VAL_DESC_COL = "meaning"
+      VAL_OBJ_NAME = "fnd_lookup_values"
+      VAL_ADDL_W_C =
+ "lookup_type='CREDIT_MEMO_REASON' and enabled_flag ='Y' and language='US'"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "6"
+      PROMPT_LEFT = "LINE_STATUS"
+      PROMPT_ABOVE = "Return Reason"
+      LAST_UPDATE_DATE = "2019/09/03"
+      LOV_TYPE = "POPLIST"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "7"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ORDERED_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "20"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "7"
+      PROMPT_LEFT = "ORDERED_DATE"
+      PROMPT_ABOVE = "ORDERED_DATE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "8"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ITEM_NUMBER"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "40"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "8"
+      PROMPT_LEFT = "ITEM_NUMBER"
+      PROMPT_ABOVE = "ITEM_NUMBER"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "9"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "INVENTORY_ITEM_ID"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "9"
+      PROMPT_LEFT = "INVENTORY_ITEM_ID"
+      PROMPT_ABOVE = "INVENTORY_ITEM_ID"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "10"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "DESCRIPTION"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "10"
+      PROMPT_LEFT = "DESCRIPTION"
+      PROMPT_ABOVE = "DESCRIPTION"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "11"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "QUANTITY"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "11"
+      PROMPT_LEFT = "QUANTITY"
+      PROMPT_ABOVE = "QUANTITY"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "12"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "SORT_CODE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "12"
+      PROMPT_LEFT = "SORT_CODE"
+      PROMPT_ABOVE = "SORT_CODE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "13"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "UOM"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "13"
+      PROMPT_LEFT = "UOM"
+      PROMPT_ABOVE = "UOM"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "14"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "3"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "LINE_TYPE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_TYPE = "TABLE"
+      VAL_ID_COL = "ottt.name"
+      VAL_MEAN_COL = "ottt.name"
+      VAL_DESC_COL = "ottt.name"
+      VAL_OBJ_NAME =
+ "OE_TRANSACTION_TYPES_ALL otta, OE_TRANSACTION_TYPES_TL ottt"
+      VAL_ADDL_W_C =
+ "otta.transaction_type_code = 'LINE' AND otta.org_id = fnd_profile.VALUE('ORG_ID') AND otta.transaction_type_id = ottt.transaction_type_id AND language = 'US'"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "14"
+      PROMPT_LEFT = "LINE_TYPE"
+      PROMPT_ABOVE = "LINE_TYPE"
+      LAST_UPDATE_DATE = "2019/09/03"
+      LOV_TYPE = "POPLIST"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "15"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "LINE_TYPE_ID"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "15"
+      PROMPT_LEFT = "LINE_TYPE_ID"
+      PROMPT_ABOVE = "LINE_TYPE_ID"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "16"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ORG_ID"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "16"
+      PROMPT_LEFT = "ORG_ID"
+      PROMPT_ABOVE = "ORG_ID"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "17"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "SHIP_FROM_ORG_ID"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "17"
+      PROMPT_LEFT = "SHIP_FROM_ORG_ID"
+      PROMPT_ABOVE = "SHIP_FROM_ORG_ID"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "18"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "UNIT_SELLING_PRICE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "18"
+      PROMPT_LEFT = "UNIT_SELLING_PRICE"
+      PROMPT_ABOVE = "UNIT_SELLING_PRICE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "19"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "PMS_CODE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "19"
+      PROMPT_LEFT = "PMS_CODE"
+      PROMPT_ABOVE = "PMS_CODE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "20"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "STORAGE_START_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "20"
+      PROMPT_LEFT = "STORAGE_START_DATE"
+      PROMPT_ABOVE = "STORAGE_START_DATE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "21"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "STORAGE_END_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "21"
+      PROMPT_LEFT = "STORAGE_END_DATE"
+      PROMPT_ABOVE = "STORAGE_END_DATE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "22"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "SERIAL_NUMBER"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "22"
+      PROMPT_LEFT = "SERIAL_NUMBER"
+      PROMPT_ABOVE = "SERIAL_NUMBER"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "23"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "FOOTPRINT"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "23"
+      PROMPT_LEFT = "FOOTPRINT"
+      PROMPT_ABOVE = "FOOTPRINT"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "24"
+      OWNER = "503095128"
+      OBJECT_VERSION_NUMBER = "2"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "SCHEDULE_SHIP_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "24"
+      PROMPT_LEFT = "SCHEDULE_SHIP_DATE"
+      PROMPT_ABOVE = "SCHEDULE_SHIP_DATE(MM/DD/YYYY)"
+      LAST_UPDATE_DATE = "2021/09/01"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "25"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "PROMISE_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "25"
+      PROMPT_LEFT = "PROMISE_DATE"
+      PROMPT_ABOVE = "PROMISE_DATE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "26"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "STORAGE_BILL_THRU_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "26"
+      PROMPT_LEFT = "STORAGE_BILL_THRU_DATE"
+      PROMPT_ABOVE = "STORAGE_BILL_THRU_DATE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "27"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "FIELD_SERVICE_TECH_SSO"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "27"
+      PROMPT_LEFT = "FIELD_SERVICE_TECH_SSO"
+      PROMPT_ABOVE = "FIELD_SERVICE_TECH_SSO"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "28"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "UNIT_COST"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "28"
+      PROMPT_LEFT = "UNIT_COST"
+      PROMPT_ABOVE = "UNIT_COST"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "29"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "MARGIN_AMOUNT"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "29"
+      PROMPT_LEFT = "MARGIN_AMOUNT"
+      PROMPT_ABOVE = "MARGIN_AMOUNT"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "30"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "MARGIN_PERCENTAGE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "30"
+      PROMPT_LEFT = "MARGIN_PERCENTAGE"
+      PROMPT_ABOVE = "MARGIN_PERCENTAGE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "31"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "RENTAL_START_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "31"
+      PROMPT_LEFT = "RENTAL_START_DATE"
+      PROMPT_ABOVE = "RENTAL_START_DATE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "32"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "RENTAL_FINAL_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "32"
+      PROMPT_LEFT = "RENTAL_FINAL_DATE"
+      PROMPT_ABOVE = "RENTAL_FINAL_DATE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "33"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "RENTAL_SERIAL_NUMBER"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "33"
+      PROMPT_LEFT = "RENTAL_SERIAL_NUMBER"
+      PROMPT_ABOVE = "RENTAL_SERIAL_NUMBER"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "34"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "RENTAL_FIXED_DAYS"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "34"
+      PROMPT_LEFT = "RENTAL_FIXED_DAYS"
+      PROMPT_ABOVE = "RENTAL_FIXED_DAYS"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "35"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "RENTAL_FIXED_AMOUNT"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "35"
+      PROMPT_LEFT = "RENTAL_FIXED_AMOUNT"
+      PROMPT_ABOVE = "RENTAL_FIXED_AMOUNT"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "36"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "PROJECT_NUMBER"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "36"
+      PROMPT_LEFT = "PROJECT_NUMBER"
+      PROMPT_ABOVE = "PROJECT_NUMBER"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "37"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "PROJECT_ID"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "37"
+      PROMPT_LEFT = "PROJECT_ID"
+      PROMPT_ABOVE = "PROJECT_ID"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "38"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "TASK_NUMBER"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "38"
+      PROMPT_LEFT = "TASK_NUMBER"
+      PROMPT_ABOVE = "TASK_NUMBER"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "39"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "TASK_ID"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "39"
+      PROMPT_LEFT = "TASK_ID"
+      PROMPT_ABOVE = "TASK_ID"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "40"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "SCHEDULER"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "40"
+      PROMPT_LEFT = "SCHEDULER"
+      PROMPT_ABOVE = "SCHEDULER"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "41"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "CREATED_BY"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "N"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      DEFAULT_TYPE = "ENVIRONMENT"
+      DEFAULT_VALUE = "OAUSER.ID"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "41"
+      PROMPT_LEFT = "CREATED_BY"
+      PROMPT_ABOVE = "CREATED_BY"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "42"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "CREATION_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "N"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      DEFAULT_TYPE = "ENVIRONMENT"
+      DEFAULT_VALUE = "SYSDATE"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "42"
+      PROMPT_LEFT = "CREATION_DATE"
+      PROMPT_ABOVE = "CREATION_DATE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "43"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "LAST_UPDATED_BY"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "N"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      DEFAULT_TYPE = "ENVIRONMENT"
+      DEFAULT_VALUE = "OAUSER.ID"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "43"
+      PROMPT_LEFT = "LAST_UPDATED_BY"
+      PROMPT_ABOVE = "LAST_UPDATED_BY"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "44"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "LAST_UPDATE_LOGIN"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "N"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      DEFAULT_TYPE = "ENVIRONMENT"
+      DEFAULT_VALUE = "OAUSER.ID"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "44"
+      PROMPT_LEFT = "LAST_UPDATE_LOGIN"
+      PROMPT_ABOVE = "LAST_UPDATE_LOGIN"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "45"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "LAST_UPDATE_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "N"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      DEFAULT_TYPE = "ENVIRONMENT"
+      DEFAULT_VALUE = "SYSDATE"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "45"
+      PROMPT_LEFT = "LAST_UPDATE_DATE"
+      PROMPT_ABOVE = "LAST_UPDATE_DATE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "46"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "PROCESS_FLAG"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "5"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "46"
+      PROMPT_LEFT = "PROCESS_FLAG"
+      PROMPT_ABOVE = "PROCESS_FLAG"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "47"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "STATUS"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "47"
+      PROMPT_LEFT = "STATUS"
+      PROMPT_ABOVE = "STATUS"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "48"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "REQUEST_ID"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "48"
+      PROMPT_LEFT = "REQUEST_ID"
+      PROMPT_ABOVE = "REQUEST_ID"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "49"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "RECORD_NUMBER"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "1"
+      FIELD_SIZE = "22"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "49"
+      PROMPT_LEFT = "RECORD_NUMBER"
+      PROMPT_ABOVE = "RECORD_NUMBER"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "50"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ERROR_MESSAGE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "2000"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "50"
+      PROMPT_LEFT = "ERROR_MESSAGE"
+      PROMPT_ABOVE = "ERROR_MESSAGE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "51"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "3"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "WAREHOUSE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "100"
+      VAL_TYPE = "TABLE"
+      VAL_ID_COL = "organization_code"
+      VAL_MEAN_COL = "organization_code"
+      VAL_DESC_COL = "organization_code"
+      VAL_OBJ_NAME = "org_organization_definitions"
+      VAL_ADDL_W_C = "operating_unit = FND_PROFILE.VALUE ('ORG_ID')"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "51"
+      PROMPT_LEFT = "WAREHOUSE"
+      PROMPT_ABOVE = "WAREHOUSE"
+      LAST_UPDATE_DATE = "2019/09/03"
+      LOV_TYPE = "POPLIST"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "52"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "2"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "REQUEST_DATE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "Y"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "3"
+      FIELD_SIZE = "0"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "52"
+      PROMPT_LEFT = "REQUEST_DATE"
+      PROMPT_ABOVE = "REQUEST_DATE (MM/DD/YYYY)"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "53"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "USER_ITEM_DESCRIPTION"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "1000"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "53"
+      PROMPT_LEFT = "USER_ITEM_DESCRIPTION"
+      PROMPT_ABOVE = "USER_ITEM_DESCRIPTION"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "54"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "PACK_CODE"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "50"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "54"
+      PROMPT_LEFT = "PACK_CODE"
+      PROMPT_ABOVE = "PACK_CODE"
+      LAST_UPDATE_DATE = "2019/09/02"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "55"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "5"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE1"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "55"
+      PROMPT_LEFT = "SO Original Commit Date"
+      PROMPT_ABOVE = "SO Original Commit Date (MM/DD/YYYY)"
+      LAST_UPDATE_DATE = "2019/11/21"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "56"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "4"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE2"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "56"
+      PROMPT_LEFT = "PRICING_AGREEMENT"
+      PROMPT_ABOVE = "PRICING_AGREEMENT"
+      LAST_UPDATE_DATE = "2020/03/25"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "57"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "4"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE3"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "57"
+      PROMPT_LEFT = "CUSTOMER_ITEM_NUMBER"
+      PROMPT_ABOVE = "CUSTOMER_ITEM_NUMBER"
+      LAST_UPDATE_DATE = "2020/03/25"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "58"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "4"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE4"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "58"
+      PROMPT_LEFT = "COMMENT"
+      PROMPT_ABOVE = "COMMENT"
+      LAST_UPDATE_DATE = "2020/03/25"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "59"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "4"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE5"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "59"
+      PROMPT_LEFT = "MILESTONE_TRIGGER"
+      PROMPT_ABOVE = "MILESTONE_TRIGGER"
+      LAST_UPDATE_DATE = "2020/03/25"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "60"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "4"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE6"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "60"
+      PROMPT_LEFT = "CONTRACT_FORMAT"
+      PROMPT_ABOVE = "CONTRACT_FORMAT"
+      LAST_UPDATE_DATE = "2020/03/25"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "61"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "4"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE7"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_TYPE = "TABLE"
+      VAL_ID_COL = "description"
+      VAL_MEAN_COL = "description"
+      VAL_DESC_COL = "description"
+      VAL_OBJ_NAME = "fnd_lookup_values"
+      VAL_ADDL_W_C =
+ "(lookup_type = 'BKR_OM_AR_BILLING_TYPES_LKP' and LANGUAGE = 'US' and ENABLED_FLAG = 'Y')"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "61"
+      PROMPT_LEFT = "BILLING_TYPE"
+      PROMPT_ABOVE = "BILLING_TYPE"
+      LAST_UPDATE_DATE = "2020/08/17"
+      LOV_TYPE = "POPLIST"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "62"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "3"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE8"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "62"
+      PROMPT_LEFT = "UPDATE_REQUEST_DATE"
+      PROMPT_ABOVE = "REQUEST_DATE (MM/DD/YYYY)"
+      LAST_UPDATE_DATE = "2019/11/06"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "63"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "6"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE9"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "N"
+      DISPLAY_FLAG = "N"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_ID_COL = "MEANING"
+      VAL_MEAN_COL = "MEANING"
+      VAL_DESC_COL = "MEANING"
+      VAL_ADDL_W_C = "lookup_type = 'CANCEL_CODE' and enabled_flag = 'Y'"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "63"
+      PROMPT_LEFT = "ATTRIBUTE9"
+      PROMPT_ABOVE = "ATTRIBUTE9"
+      LAST_UPDATE_DATE = "2019/11/07"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+    BEGIN BNE_INTERFACE_COLS "64"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "7"
+      INTERFACE_COL_TYPE = "1"
+      INTERFACE_COL_NAME = "ATTRIBUTE10"
+      ENABLED_FLAG = "Y"
+      REQUIRED_FLAG = "Y"
+      DISPLAY_FLAG = "Y"
+      READ_ONLY_FLAG = "N"
+      NOT_NULL_FLAG = "N"
+      SUMMARY_FLAG = "N"
+      MAPPING_ENABLED_FLAG = "Y"
+      DATA_TYPE = "2"
+      FIELD_SIZE = "240"
+      VAL_TYPE = "TABLE"
+      VAL_ID_COL = "LOOKUP_CODE"
+      VAL_MEAN_COL = "MEANING"
+      VAL_DESC_COL = "DESCRIPTION"
+      VAL_OBJ_NAME = "FND_LOOKUP_VALUES"
+      VAL_ADDL_W_C =
+ "lookup_type = 'BHGE_SO_LINE_WEBADI_ACTION' and enabled_flag = 'Y' and language = USERENV('LANG')"
+      VAL_COMPONENT = "" ""
+      DISPLAY_ORDER = "64"
+      PROMPT_LEFT = "ACTION"
+      PROMPT_ABOVE = "ACTION"
+      LAST_UPDATE_DATE = "2019/10/17"
+      LOV_TYPE = "POPLIST"
+      VAL_QUERY = "" ""
+      EXPANDED_SQL = "" ""
+    END BNE_INTERFACE_COLS
+    
+  END BNE_INTERFACES
+  
+
+
+
+  BEGIN BNE_LAYOUTS "GEOGONT" "GEOGOMSALESORDERLINESLAYOUT_2"
+    OWNER = "502262706"
+    OBJECT_VERSION_NUMBER = "13"
+    STYLESHEET_ASN = "BNE"
+    STYLESHEET_CODE = "DEFAULT"
+    STYLE = "protected:Y:BOOLEAN;"
+    STYLE_CLASS = "BNE_PAGE"
+    REPORTING_FLAG = "N"
+    USER_NAME = "GEOGOMSALESORDERLINESLAYOUT_2"
+    LAST_UPDATE_DATE = "2020/08/12"
+    CREATE_DOC = "" ""
+  
+    BEGIN BNE_LAYOUT_BLOCKS "1"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      LAYOUT_ELEMENT = "CONTEXT"
+      STYLE_CLASS = "BNE_CONTEXT"
+      ROW_STYLE_CLASS = "BNE_CONTEXT_ROW"
+      PROMPT_DISPLAYED_FLAG = "Y"
+      PROMPT_STYLE_CLASS = "BNE_CONTEXT_HEADER"
+      HINT_DISPLAYED_FLAG = "Y"
+      HINT_STYLE_CLASS = "BNE_CONTEXT_HINT"
+      ORIENTATION = "HORIZONTAL"
+      LAYOUT_CONTROL = "COLUMN_FLOW"
+      DISPLAY_FLAG = "Y"
+      BLOCKSIZE = "1"
+      MINSIZE = "1"
+      MAXSIZE = "1"
+      SEQUENCE_NUM = "1"
+      PROMPT_COLSPAN = "2"
+      HINT_COLSPAN = "1"
+      ROW_COLSPAN = "2"
+      SUMMARY_STYLE_CLASS = "BNE_LINES_TOTAL"
+      USER_NAME = "Context"
+      LAST_UPDATE_DATE = "2020/08/12"
+      TITLE_STYLE_CLASS = "TITLE"
+    
+      BEGIN BNE_LAYOUT_COLS "10"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "64"
+        DEFAULT_VALUE = "CREATE"
+        DEFAULT_TYPE = "CONSTANT"
+        DISPLAY_WIDTH = "0"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "Y"
+      END BNE_LAYOUT_COLS
+      
+    END BNE_LAYOUT_BLOCKS
+    
+    BEGIN BNE_LAYOUT_BLOCKS "2"
+      OWNER = "502262706"
+      OBJECT_VERSION_NUMBER = "1"
+      PARENT_ID = "1"
+      LAYOUT_ELEMENT = "LINE"
+      STYLE_CLASS = "BNE_LINES"
+      ROW_STYLE_CLASS = "BNE_LINES_ROW"
+      PROMPT_DISPLAYED_FLAG = "Y"
+      PROMPT_STYLE_CLASS = "BNE_LINES_HEADER"
+      HINT_DISPLAYED_FLAG = "Y"
+      HINT_STYLE_CLASS = "BNE_LINES_HINT"
+      ORIENTATION = "VERTICAL"
+      LAYOUT_CONTROL = "TABLE_FLOW"
+      DISPLAY_FLAG = "Y"
+      BLOCKSIZE = "500"
+      MINSIZE = "1"
+      MAXSIZE = "1"
+      SEQUENCE_NUM = "2"
+      PROMPT_COLSPAN = "2"
+      HINT_COLSPAN = "1"
+      ROW_COLSPAN = "2"
+      SUMMARY_STYLE_CLASS = "BNE_LINES_TOTAL"
+      USER_NAME = "Line"
+      LAST_UPDATE_DATE = "2020/08/12"
+      TITLE_STYLE_CLASS = "TITLE"
+    
+      BEGIN BNE_LAYOUT_COLS "20"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "2"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "30"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "4"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "40"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "8"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "50"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "57"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "60"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "11"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "70"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "12"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "80"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "13"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "90"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "14"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "100"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "61"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "110"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "18"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "120"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "56"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "130"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "51"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "140"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "59"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "150"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "58"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "160"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "60"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "170"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "52"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "180"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "6"
+        DISPLAY_WIDTH = "30"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "190"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "19"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "200"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "20"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "210"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "21"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "220"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "22"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "230"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "24"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "240"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "23"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "250"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "25"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "260"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "26"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "270"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "27"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "280"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "28"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "290"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "29"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "300"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "30"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "310"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "31"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "320"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "32"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "330"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "33"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "340"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "34"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "350"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "35"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "360"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "36"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "370"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "38"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "380"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "53"
+        DISPLAY_WIDTH = "30"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "390"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "54"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "400"
+        OWNER = "502262706"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "55"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2020/08/12"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+    END BNE_LAYOUT_BLOCKS
+    
+  END BNE_LAYOUTS
+  
+  BEGIN BNE_LAYOUTS "GEOGONT" "GEOGOMSALESORDERLINESLAYOUT_3"
+    OWNER = "503095128"
+    OBJECT_VERSION_NUMBER = "13"
+    STYLESHEET_ASN = "BNE"
+    STYLESHEET_CODE = "DEFAULT"
+    STYLE = "protected:Y:BOOLEAN;"
+    STYLE_CLASS = "BNE_PAGE"
+    REPORTING_FLAG = "N"
+    USER_NAME = "GEOGOMSALESORDERLINESLAYOUT_3"
+    LAST_UPDATE_DATE = "2021/09/01"
+    CREATE_DOC = "" ""
+  
+    BEGIN BNE_LAYOUT_BLOCKS "1"
+      OWNER = "503095128"
+      OBJECT_VERSION_NUMBER = "1"
+      LAYOUT_ELEMENT = "CONTEXT"
+      STYLE_CLASS = "BNE_CONTEXT"
+      ROW_STYLE_CLASS = "BNE_CONTEXT_ROW"
+      PROMPT_DISPLAYED_FLAG = "Y"
+      PROMPT_STYLE_CLASS = "BNE_CONTEXT_HEADER"
+      HINT_DISPLAYED_FLAG = "Y"
+      HINT_STYLE_CLASS = "BNE_CONTEXT_HINT"
+      ORIENTATION = "HORIZONTAL"
+      LAYOUT_CONTROL = "COLUMN_FLOW"
+      DISPLAY_FLAG = "Y"
+      BLOCKSIZE = "1"
+      MINSIZE = "1"
+      MAXSIZE = "1"
+      SEQUENCE_NUM = "1"
+      PROMPT_COLSPAN = "2"
+      HINT_COLSPAN = "1"
+      ROW_COLSPAN = "2"
+      SUMMARY_STYLE_CLASS = "BNE_LINES_TOTAL"
+      USER_NAME = "Context"
+      LAST_UPDATE_DATE = "2021/09/01"
+      TITLE_STYLE_CLASS = "TITLE"
+    
+      BEGIN BNE_LAYOUT_COLS "10"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "52"
+        DEFAULT_VALUE = "select sysdate from dual"
+        DEFAULT_TYPE = "SQL"
+        DISPLAY_WIDTH = "0"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "Y"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "20"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "64"
+        DEFAULT_VALUE = "UPDATE"
+        DEFAULT_TYPE = "CONSTANT"
+        DISPLAY_WIDTH = "0"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "Y"
+      END BNE_LAYOUT_COLS
+      
+    END BNE_LAYOUT_BLOCKS
+    
+    BEGIN BNE_LAYOUT_BLOCKS "2"
+      OWNER = "503095128"
+      OBJECT_VERSION_NUMBER = "1"
+      PARENT_ID = "1"
+      LAYOUT_ELEMENT = "LINE"
+      STYLE_CLASS = "BNE_LINES"
+      ROW_STYLE_CLASS = "BNE_LINES_ROW"
+      PROMPT_DISPLAYED_FLAG = "Y"
+      PROMPT_STYLE_CLASS = "BNE_LINES_HEADER"
+      HINT_DISPLAYED_FLAG = "Y"
+      HINT_STYLE_CLASS = "BNE_LINES_HINT"
+      ORIENTATION = "VERTICAL"
+      LAYOUT_CONTROL = "TABLE_FLOW"
+      DISPLAY_FLAG = "Y"
+      BLOCKSIZE = "10"
+      MINSIZE = "1"
+      MAXSIZE = "1"
+      SEQUENCE_NUM = "2"
+      PROMPT_COLSPAN = "2"
+      HINT_COLSPAN = "1"
+      ROW_COLSPAN = "2"
+      SUMMARY_STYLE_CLASS = "BNE_LINES_TOTAL"
+      USER_NAME = "Line"
+      LAST_UPDATE_DATE = "2021/09/01"
+      TITLE_STYLE_CLASS = "TITLE"
+    
+      BEGIN BNE_LAYOUT_COLS "30"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "24"
+        DEFAULT_VALUE = "select sysdate from dual"
+        DEFAULT_TYPE = "SQL"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "40"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "2"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "50"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "4"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "60"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "11"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "70"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "56"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "80"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "18"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "90"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "61"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "100"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "62"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "110"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "53"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "120"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "12"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "130"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "54"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "140"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "60"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "150"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "59"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+      BEGIN BNE_LAYOUT_COLS "160"
+        OWNER = "503095128"
+        OBJECT_VERSION_NUMBER = "1"
+        INTERFACE_ASN = "GEOGONT"
+        INTERFACE_CODE = "GEOG_OM_SO_ADI_2_XINTG_INTF1"
+        INTERFACE_SEQ_NUM = "58"
+        DISPLAY_WIDTH = "15"
+        LAST_UPDATE_DATE = "2021/09/01"
+        READ_ONLY_FLAG = "N"
+      END BNE_LAYOUT_COLS
+      
+    END BNE_LAYOUT_BLOCKS
+    
+  END BNE_LAYOUTS
+  
+
+  BEGIN BNE_CONTENTS "GEOGONT" "GEOG_OM_SO_ADI_2_CNT1"
+    OBJECT_VERSION_NUMBER = "1"
+    OWNER = "502262706"
+    CONTENT = "" ""
+    USER_NAME = "NONE"
+    LAST_UPDATE_DATE = "2019/09/02"
+  
+  
+  END BNE_CONTENTS
+  
+
+
+END BNE_INTEGRATORS
+
